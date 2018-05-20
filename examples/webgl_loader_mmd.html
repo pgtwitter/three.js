@@ -50,6 +50,7 @@
 		<script src="js/Detector.js"></script>
 		<script src="js/libs/stats.min.js"></script>
 		<script src="js/libs/dat.gui.min.js"></script>
+		<script src="js/vr/WebVR.js"></script>
 
 		<script>
 
@@ -130,6 +131,7 @@
 				loader.loadWithAnimation( modelFile, vmdFiles, function ( mmd ) {
 
 					mesh = mmd.mesh;
+					mesh.position.z = -30;
 					mesh.position.y = -10;
 					scene.add( mesh );
 
@@ -148,6 +150,7 @@
 
 					initGui();
 
+					webvr_setting();
 				}, onProgress, onError );
 
 				var controls = new THREE.OrbitControls( camera, renderer.domElement );
@@ -250,21 +253,26 @@
 
 			function animate() {
 
-				requestAnimationFrame( animate );
-
-				stats.begin();
-				render();
-				stats.end();
+				renderer.animate(render);
 
 			}
 
 			function render() {
+				stats.begin();
 
 				helper.update( clock.getDelta() );
 				effect.render( scene, camera );
 
+				stats.end();
 			}
 
+			function webvr_setting() {
+				for(let i=0;i<scene.children.length;i++)
+					scene.children[i].position.z= -30;
+				renderer.vr.enabled = true;
+				scene.background = new THREE.Color( 0x444488 );
+				self.container.appendChild(WEBVR.createButton(renderer));
+			}
 		</script>
 
 	</body>
