@@ -51,6 +51,7 @@
 		<script src="js/libs/stats.min.js"></script>
 		<script src="js/libs/dat.gui.min.js"></script>
 		<script src="js/vr/WebVR.js"></script>
+		<script src="GamepadCtrl.js"></script>
 
 		<script>
 
@@ -259,6 +260,7 @@
 
 			function render() {
 				stats.begin();
+				GamepadCtrl.update();
 
 				helper.update( clock.getDelta() );
 				effect.render( scene, camera );
@@ -272,6 +274,14 @@
 				renderer.vr.enabled = true;
 				scene.background = new THREE.Color( 0x444488 );
 				self.container.appendChild(WEBVR.createButton(renderer));
+				GamepadCtrl.addListener('update', function(state) {
+					if (state.gamepad.buttons[1].pressed) {
+						const direction = state.gamepad.direction;
+						const delta= direction.normalize().multiplyScalar(0.3);
+						for(let i=0;i<scene.children.length;i++)
+							scene.children[i].position.sub(delta);
+					}
+				});
 			}
 		</script>
 
