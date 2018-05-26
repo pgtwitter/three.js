@@ -101,7 +101,7 @@
 	}
 
 	function update(targets) {
-		const vrGamePads = gamePads(room);
+		const vrGamePads = gamePads();
 		if (!vrGamePads || vrGamePads.length == 0) return;
 		const gamepad = vrGamePads[0];
 		const zeroPos = (!gamepad.hand || gamepad.hand == 'right') ? zeroPosRight : zeroPosLeft;
