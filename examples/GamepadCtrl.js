@@ -120,6 +120,7 @@
 			}
 			state.lastButtonState[i] = newState;
 		}
+		fire('update', state)
 		if (state.fireIntersected)
 			fire('Intersect', state);
 		if (state.fireLeft)
