@@ -7,7 +7,8 @@
 		intersected: null,
 		zapVisibility: true,
 	};
-	const zeroPos = new THREE.Vector3(.25, 1., -.25);
+	const zeroPosRight = new THREE.Vector3(.25, 1.1, -.4);
+	const zeroPosLeft = new THREE.Vector3(-.25, 1.1, -.4);
 	const raycaster = new THREE.Raycaster();
 	raycaster.near = 0;
 	raycaster.far = Infinity;
@@ -39,7 +40,6 @@
 		}));
 		cz.rotation.x = -Math.PI / 2;
 		ctrl.add(cz)
-		ctrl.position.fromArray(zeroPos.toArray());
 		state.ctrlObject = ctrl;
 		return ctrl;
 	}
@@ -63,9 +63,9 @@
 		return obj;
 	}
 
-	function intersections(q, targets) {
+	function intersections(position, q, targets) {
 		const direct = (new THREE.Vector3(0, 0, -1)).applyQuaternion(q);
-		raycaster.set(zeroPos, direct);
+		raycaster.set(position, direct);
 		const intersects = raycaster.intersectObjects(targets);
 		if (intersects.length > 0) {
 			if (state.intersected != intersects[0].object) {
@@ -104,9 +104,11 @@
 		const vrGamePads = gamePads(room);
 		if (!vrGamePads || vrGamePads.length == 0) return;
 		const gamepad = vrGamePads[0];
+		const zeroPos = (!gamepad.hand || gamepad.hand == 'right') ? zeroPosRight : zeroPosLeft;
+		state.ctrlObject.position.fromArray(zeroPos.toArray());
 		const q = new THREE.Quaternion().fromArray(gamepad.pose.orientation);
 		state.ctrlObject.setRotationFromQuaternion(q);
-		intersections(q, targets);
+		intersections(zeroPos, q, targets);
 		state.zapObject.scale.z = (state.intersected) ? state.intersected.intersect.distance : 10.0;
 		state.zapObject.visible = state.zapVisibility;
 		for (let i = 0; i < gamepad.buttons.length; i++) {
