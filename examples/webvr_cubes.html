@@ -28,6 +28,7 @@
 		<script src="../build/three.js"></script>
 
 		<script src="js/vr/WebVR.js"></script>
+		<script src="./GamepadCtrl.js"></script>
 
 		<script>
 
@@ -137,6 +138,30 @@
 
 				document.body.appendChild( WEBVR.createButton( renderer ) );
 
+				scene.add(GamepadCtrl.getController());
+				GamepadCtrl.setZapVisibility(false);
+				GamepadCtrl.addListener('buttonDown', function(state) {
+					GamepadCtrl.setZapVisibility(true);
+					const btnState = state.lastButtonState[1];
+					const intersected = state.intersected;
+					if (!btnState || !intersected) return;
+					setTimeout(function() {
+						room.remove(intersected);
+					}, 250);
+				});
+				GamepadCtrl.addListener('buttonUp', function(state) {
+					GamepadCtrl.setZapVisibility(false);
+				});
+				GamepadCtrl.addListener('intersect', function(state){
+					const obj = state.intersected;
+					obj.currentHex = obj.material.emissive.getHex();
+					obj.material.emissive.setHex(0xffff00);
+				});
+				GamepadCtrl.addListener('leave', function(state){
+					const obj = state.leftObject;
+					if (!obj) return;
+					obj.material.emissive.setHex(obj.currentHex);
+				});
 			}
 
 			function onMouseDown() {
@@ -185,6 +210,7 @@
 			}
 
 			function render() {
+				GamepadCtrl.update(room.children);
 
 				var delta = clock.getDelta() * 60;
 
