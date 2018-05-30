@@ -48,6 +48,8 @@
 		<script src="js/Detector.js"></script>
 		<script src="js/libs/stats.min.js"></script>
 		<script src="js/libs/dat.gui.min.js"></script>
+		<script src="js/vr/WebVR.js"></script>
+		<script src="GamepadCtrl.js"></script>
 
 		<script>
 
@@ -151,6 +153,7 @@
 								initGui();
 
 							}
+							webvr_setting();
 
 						}, onProgress, onError );
 
@@ -289,17 +292,32 @@
 
 			function animate() {
 
-				requestAnimationFrame( animate );
-				render();
+				renderer.animate(render);
 
 			}
 
 			function render() {
+				GamepadCtrl.update();
 
 				effect.render( scene, camera );
 
 			}
 
+			function webvr_setting() {
+				for (let i = 0; i < scene.children.length; i++)
+					scene.children[i].position.set(2, -10, -15);
+				renderer.vr.enabled = true;
+				scene.background = new THREE.Color(0x444488);
+				self.container.appendChild(WEBVR.createButton(renderer));
+				GamepadCtrl.addListener('update', function(state) {
+					if (!state.gamepad.buttons[0].pressed) return;
+					const p = state.touchPosition;
+					if (!p) return;
+					const index = (p[0] > 0.5) ? 0 : (p[0] < -0.5) ? 3 : (p[1] > 0.5) ? 5 : (p[1] < -0.5) ? 7 : -1;
+					if (index < 0) return;
+					helper.pose(mesh, vpds[index]);
+				});
+			}
 		</script>
 
 	</body>
