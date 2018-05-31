@@ -120,8 +120,8 @@
 			const newState = state.gamepad.buttons[i].pressed;
 			const lastState = state.lastButtonState[i] || false;
 			if (newState != lastState) {
-				if (newState) state.fireBtnDown = true;
-				else state.fireBtnUp = true;
+				if (newState) state.fire.BtnDown = true;
+				else state.fire.BtnUp = true;
 			}
 			state.lastButtonState[i] = newState;
 		}
