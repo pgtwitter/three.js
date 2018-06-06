@@ -76,6 +76,7 @@
 	<script src="js/Detector.js"></script>
 	<script src="js/libs/stats.min.js"></script>
 	<script src="js/libs/dat.gui.min.js"></script>
+	<script src="js/vr/WebVR.js"></script>
 
 
 	<script>
@@ -104,7 +105,9 @@
 		var clock = new THREE.Clock();
 
 		init();
-		animate();
+		renderer.vr.enabled= true;
+		document.body.appendChild( WEBVR.createButton( renderer ) );
+		renderer.animate(animate);
 
 		function init() {
 
@@ -551,7 +554,6 @@
 
 		function animate() {
 
-			requestAnimationFrame( animate );
 
 			render();
 			stats.update();
